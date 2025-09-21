@@ -10,8 +10,9 @@ def write_file(working_directory, file_path, content):
 
         with open(full_path_absolute, "w") as f:
             f.write(content)
-        print(f'Successfully wrote to "{file_path}" ({len(content)} characters written)')
+        info = f'Successfully wrote to "{file_path}" ({len(content)} characters written)' 
+        print(info)
+        return info
 
     except Exception as e:
         print(f'Error: {e}')
-        
