@@ -5,6 +5,7 @@ from google import genai
 from google.genai import types
 from config import SYSTEM_PROMPT
 from functions.schema import available_functions
+from functions.call_function import call_function
 
 load_dotenv()
 
@@ -25,7 +26,7 @@ def main():
         if option == "--verbose":
             global verbose
             verbose = True
-        
+            
 
     user_prompt = cli_args[1]
     messages = [
@@ -48,9 +49,16 @@ def main():
 
     if funcs_called:
         for function_call_part in funcs_called:
-            print(f"Calling function: {function_call_part.name}({function_call_part.args})")
-#    if response.text:
-#        print(f"\nresponse: {response.text}")
+            try:
+                func_call_result = call_function(function_call_part, verbose)
+                if not func_call_result.parts[0].function_response.response:
+                    raise Exception("Fatal: error in function exection")
+                if verbose:
+                    print(f"-> {func_call_result.parts[0].function_response.response}")
+            except Exception as e:
+                print(e)
+#        if response.text:
+#           print(f"\nresponse: {response.text}")
 
 if __name__ == "__main__":
     main()

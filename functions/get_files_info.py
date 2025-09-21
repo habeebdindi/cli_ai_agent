@@ -8,6 +8,7 @@ def get_files_info(working_directory, directory="."):
         directory_check = os.path.isdir(full_path_absolute)
         
         if working_directory not in full_path_absolute:
+            print(f"full abs path: {full_path_absolute}")
             raise Exception(f'Cannot list "{directory}" as it is outside the permitted working directory')
         if directory_check is not True:
             raise Exception(f'"{directory}" is not a directory')

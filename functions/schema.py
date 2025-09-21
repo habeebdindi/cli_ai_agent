@@ -43,7 +43,7 @@ schema_get_file_content = types.FunctionDeclaration(
                 description="The file whose content is to be shown, relative to the working directory. Must be provided."
             )
         },
-        required=["working_directory", "file_path"]
+        required=["file_path"]
     )
 )
 
@@ -66,7 +66,7 @@ schema_run_python_file = types.FunctionDeclaration(
                 description="A list of arguments to be passed to the file that's to be executed(file_path)"
             )
         },
-        required=["working_directory", "file_path"]
+        required=["file_path"]
     )
 )
 
