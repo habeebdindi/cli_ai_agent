@@ -1,5 +1,3 @@
-# calculator.py
-
 class Calculator:
     def __init__(self):
         self.operators = {
@@ -18,15 +16,42 @@ class Calculator:
     def evaluate(self, expression):
         if not expression or expression.isspace():
             return None
-        tokens = expression.strip().split()
+        tokens = self._tokenize(expression)
         return self._evaluate_infix(tokens)
+
+    def _tokenize(self, expression):
+        tokens = []
+        current_number = ''
+        for char in expression:
+            if char.isdigit() or char == '.':
+                current_number += char
+            elif char in self.operators or char in ['(', ')']:
+                if current_number:
+                    tokens.append(current_number)
+                    current_number = ''
+                tokens.append(char)
+            elif char.isspace():
+                if current_number:
+                    tokens.append(current_number)
+                    current_number = ''
+            else:
+                raise ValueError(f"Invalid character: {char}")
+        if current_number:
+            tokens.append(current_number)
+        return tokens
 
     def _evaluate_infix(self, tokens):
         values = []
         operators = []
 
         for token in tokens:
-            if token in self.operators:
+            if token == '(': # Handle open parenthesis
+                operators.append(token)
+            elif token == ')': # Handle closing parenthesis
+                while operators and operators[-1] != '(': # while there are operators and the top of the stack is not an open parenthesis
+                    self._apply_operator(operators, values)
+                operators.pop() # Remove open parenthesis
+            elif token in self.operators:
                 while (
                     operators
                     and operators[-1] in self.operators
@@ -53,6 +78,8 @@ class Calculator:
             return
 
         operator = operators.pop()
+        if operator == '(': # if it is a parenthesis, return
+            return
         if len(values) < 2:
             raise ValueError(f"not enough operands for operator {operator}")
 

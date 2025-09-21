@@ -24,7 +24,7 @@ def get_files_info(working_directory, directory="."):
             try:
                 full_abs_path = os.path.join(full_path_absolute, content)
                 info = f'- {content}: file_size={os.path.getsize(full_abs_path)} bytes, is_dir={os.path.isdir(full_abs_path)}'
-                print(info)
+                #print(info)
                 all_content += f"{info}\n"
             except Exception as e:
                 print(f'Error: {e}')

@@ -9,6 +9,10 @@ from functions.call_function import call_function
 
 load_dotenv()
 
+#mute the annoying output "Warning: there are non-text parts in the response: ..."
+os.environ["GRPC_VERBOSITY"] = "ERROR"
+os.environ["GLOG_minloglevel"] = "2"
+
 api_key = os.environ.get("GEMINI_API_KEY")
 client = genai.Client(api_key=api_key)
 verbose = False
@@ -54,9 +58,6 @@ def main():
         except Exception as e:
             print(f"Error: {e}")
 
-        if response.text:
-            print(f"\nresponse: {response.text}")
-
         if response.candidates:
             for candidate in response.candidates:
                 messages.append(candidate.content)
@@ -73,8 +74,11 @@ def main():
                 except Exception as e:
                     print(e)
 
-        if "final analysis" in response.text:
-            break
+        if response.text:
+            if "final analysis" in response.text:
+                print(f"\nresponse:\n {response.text}")
+                break
+
         loop_counter += 1
 
 
