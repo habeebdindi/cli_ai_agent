@@ -3,6 +3,8 @@ import sys
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from config import SYSTEM_PROMPT
+from functions.schema import available_functions
 
 load_dotenv()
 
@@ -29,13 +31,26 @@ def main():
     messages = [
         types.Content(role="user", parts=[types.Part(text=user_prompt)]),
     ]
-    response = client.models.generate_content(model=model, contents=messages)
+    response = client.models.generate_content(
+        model=model,
+        contents=messages,
+        config=types.GenerateContentConfig(
+            tools=[available_functions],
+            system_instruction=SYSTEM_PROMPT
+        )
+    )
+    funcs_called = response.function_calls
 
     if verbose:
         print(f"User prompt: {user_prompt}")
         print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
-        print(f"Response tokens: {response.usage_metadata.candidates_token_count}\n")
-    print(f"response: {response.text}")
+        print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
+
+    if funcs_called:
+        for function_call_part in funcs_called:
+            print(f"Calling function: {function_call_part.name}({function_call_part.args})")
+#    if response.text:
+#        print(f"\nresponse: {response.text}")
 
 if __name__ == "__main__":
     main()
